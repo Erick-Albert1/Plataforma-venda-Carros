@@ -1,4 +1,4 @@
-export function carDetail() {
+export function CarDetail() {
  
     return (
       <div>
