@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useContext } from 'react'
 import { Link, useNavigate} from 'react-router-dom'
 import logoImg from '../../assets/logo.svg'
 import { Container } from '../../components/container'
@@ -10,6 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 
 import { auth } from '../../services/firebaseConnection'
 import { createUserWithEmailAndPassword, updateProfile, signOut } from 'firebase/auth'
+import { AuthContext } from '../../context/AuthContext'
 
 const schema = z.object({
   name:z.string().nonempty("O campo é obrigatório"),
@@ -20,6 +21,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 export function Register() {
+  const { handleInfoUser} = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -41,6 +43,11 @@ export function Register() {
     .then(async(user)=>{
       await updateProfile(user.user, {
         displayName: data.name
+      })
+      handleInfoUser({
+        name: data.name,
+        email: data.email,
+        uid: user.user.uid
       })
       console.log("Cadastrado com sucesso!")
       navigate("/dashboard", {replace: true})
